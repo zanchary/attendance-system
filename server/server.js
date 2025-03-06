@@ -1,9 +1,7 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
-const morgan = require('morgan');
 const dotenv = require('dotenv');
-const path = require('path');
+const mongoose = require('mongoose');
 
 // 載入環境變數
 dotenv.config();
@@ -12,33 +10,21 @@ dotenv.config();
 const app = express();
 
 // 中間件
-app.use(express.json()); // 解析 JSON 請求體
-app.use(cors()); // 允許跨域請求
-app.use(morgan('dev')); // 日誌記錄
+app.use(express.json());
+app.use(cors());
 
-// 連接數據庫
+// 連接數據庫 - 修改連接選項
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useCreateIndex: true,
-  useFindAndModify: false
+  useUnifiedTopology: true
 })
   .then(() => console.log('MongoDB 連接成功'))
   .catch(err => console.error('MongoDB 連接失敗:', err));
 
-// 路由（後續添加）
-// app.use('/api/users', require('./routes/userRoutes'));
-// app.use('/api/attendance', require('./routes/attendanceRoutes'));
-// app.use('/api/leave', require('./routes/leaveRoutes'));
-
-// 生產環境配置
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../client/build')));
-  
-  app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, '../client/build', 'index.html'));
-  });
-}
+// 測試路由
+app.get('/api/test', (req, res) => {
+  res.json({ message: '打卡系統 API 正常運行中!' });
+});
 
 // 設置端口
 const PORT = process.env.PORT || 5000;
